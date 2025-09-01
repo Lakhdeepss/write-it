@@ -1,19 +1,23 @@
-'use client'
-import React, { useEffect } from 'react'
+
+
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { connectDB } from '@/lib/dbConnect'
-const Page = () => {
+import { getnotes } from '@/actions/getNotes'
+
+import { Homedata } from '@/components/homedata'
+const Page = async () => {
+
+
+  const data = await getnotes();
 
 
   return (
     <div>
       <div className="flex flex-col items-center justify-center min-h-screen">
 
-        {/* Title + Image Row */}
-        <div className="flex items-center gap-6">
+        {data ? <Homedata data={data} /> : <div className="flex items-center gap-6">
           <h1 className="text-2xl font-bold">Add your first note!!</h1>
           <Image
             className="size-40"
@@ -23,6 +27,8 @@ const Page = () => {
             height={400}
           />
         </div>
+        }
+        {/* Title + Image Row */}
 
         {/* Button with Icon */}
         <Link href="/addnote/">
