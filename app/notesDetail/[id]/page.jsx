@@ -1,76 +1,77 @@
-'use client'
-import React from 'react'
-import { useParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { getNotesDetails } from '@/actions/getNotesDetails'
-import NoteDetailCardHeader from '@/components/noteDetailCardHeader'
-import PageLaoder from '@/components/pageLaoder'
-import { editNote } from '@/actions/editnote'
+"use client";
+import React, { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { getNotesDetails } from "@/actions/getNotesDetails";
+import NoteDetailCardHeader from "@/components/noteDetailCardHeader";
+import PageLoader from "@/components/pageLaoder";
+import { editNote } from "@/actions/editnote";
 
 const NotesDetailPage = () => {
-    const { id } = useParams()
+    const { id } = useParams();
     const [note, setNote] = useState(null);
-    const [content, setContent] = useState(note ? note.content : '');
-
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
     const [isEditing, setIsEditing] = useState(false);
+    const [copied, setCopied] = useState(false);
+
     useEffect(() => {
         async function fetchNote() {
             const data = await getNotesDetails(id);
             setNote(data);
-            setContent(data.content);
+            setTitle(data.title || "");
+            setContent(data.content || "");
         }
         fetchNote();
     }, [id]);
 
-    const [copied, setCopied] = useState(false);
-
     const handleSave = async () => {
+        if (!note) return;
         try {
-            await editNote(note._id, content); // ✅ only data ops here
-            setIsEditing(false); // ✅ state handling stays client-side
+            const updated = await editNote(note._id, title, content); // ✅ update both
+            setNote(updated);
+            setTitle(updated.title);
+            setContent(updated.content);
+            setIsEditing(false);
         } catch (err) {
             console.error("Error updating note:", err);
         }
     };
 
-
     const handleCopy = async () => {
-        if (!note) return;
         try {
-            await navigator.clipboard.writeText(note.content || '');
+            await navigator.clipboard.writeText(content || "");
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         } catch (e) {
-            console.error('Copy failed', e);
+            console.error("Copy failed", e);
         }
     };
 
     const handleShare = async () => {
-        if (!note) return;
-        const shareData = { title: note.title, text: note.content };
+        const shareData = { title, text: content };
         if (navigator.share) {
             try {
                 await navigator.share(shareData);
-            } catch (e) {
+            } catch {
                 // user cancelled or not supported
             }
         } else {
             await handleCopy();
-
-            alert('Note content copied to clipboard');
+            alert("Note content copied to clipboard");
         }
     };
 
-    const readingTime = note && note.content
-        ? Math.max(1, Math.ceil(note.content.trim().split(/\s+/).length / 200))
-        : null;
+    const readingTime =
+        content && content.trim()
+            ? Math.max(1, Math.ceil(content.trim().split(/\s+/).length / 200))
+            : null;
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-pink-50 p-8">
             {note ? (
                 <article className="max-w-3xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
                     <NoteDetailCardHeader
-                        note={note}
+                        note={{ ...note, title }}
                         handleCopy={handleCopy}
                         handleShare={handleShare}
                         readingTime={readingTime}
@@ -82,7 +83,7 @@ const NotesDetailPage = () => {
                         {isEditing ? (
                             <div className="flex flex-col space-y-4">
                                 <textarea
-                                    className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-300 "
+                                    className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-300"
                                     rows={10}
                                     value={content}
                                     onChange={(e) => setContent(e.target.value)}
@@ -131,11 +132,10 @@ const NotesDetailPage = () => {
                     </footer>
                 </article>
             ) : (
-                <PageLaoder />
+                <PageLoader />
             )}
         </div>
-    )
-}
+    );
+};
 
-
-export default NotesDetailPage
+export default NotesDetailPage;

@@ -2,13 +2,15 @@
 import React, { useState } from "react";
 import { editNote } from "@/actions/editnote";
 
+
 const NoteDetailCardHeader = ({ note, handleCopy, handleShare, readingTime, copied }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [title, setTitle] = useState(note.title);
+    const [content, setContent] = useState(note.content);
 
     const handleSave = async () => {
         try {
-            await editNote(note._id, { title }); // ✅ extend server action to handle title
+            await editNote(note._id, title, content); // ✅ extend server action to handle title
             setIsEditing(false);
         } catch (err) {
             console.error("Error saving title:", err);
