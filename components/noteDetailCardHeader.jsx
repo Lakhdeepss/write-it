@@ -1,21 +1,17 @@
 "use client";
 import React, { useState } from "react";
-import { editNote } from "@/actions/editnote";
 
-
-const NoteDetailCardHeader = ({ note, handleCopy, handleShare, readingTime, copied }) => {
-    const [isEditing, setIsEditing] = useState(false);
-    const [title, setTitle] = useState(note.title);
-    const [content, setContent] = useState(note.content);
-
-    const handleSave = async () => {
-        try {
-            await editNote(note._id, title, content); // ✅ extend server action to handle title
-            setIsEditing(false);
-        } catch (err) {
-            console.error("Error saving title:", err);
-        }
-    };
+const NoteDetailCardHeader = ({
+    note,
+    title,
+    setTitle,
+    handleSave,
+    handleCopy,
+    handleShare,
+    readingTime,
+    copied
+}) => {
+    const [isEditingTitle, setIsEditingTitle] = useState(false);
 
     return (
         <header className="p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -24,7 +20,7 @@ const NoteDetailCardHeader = ({ note, handleCopy, handleShare, readingTime, copi
                     {title ? title.substring(0, 1).toUpperCase() : "N"}
                 </div>
                 <div>
-                    {isEditing ? (
+                    {isEditingTitle ? (
                         <div className="flex gap-2 items-center">
                             <input
                                 type="text"
@@ -33,15 +29,18 @@ const NoteDetailCardHeader = ({ note, handleCopy, handleShare, readingTime, copi
                                 className="border p-2 rounded text-xl font-bold"
                             />
                             <button
-                                onClick={handleSave}
+                                onClick={() => {
+                                    handleSave();
+                                    setIsEditingTitle(false);
+                                }}
                                 className="px-3 py-1 bg-green-500 text-white rounded"
                             >
                                 Save
                             </button>
                             <button
                                 onClick={() => {
-                                    setIsEditing(false);
-                                    setTitle(note.title); // reset if cancel
+                                    setTitle(note.title);
+                                    setIsEditingTitle(false);
                                 }}
                                 className="px-3 py-1 bg-gray-300 rounded"
                             >
@@ -51,7 +50,7 @@ const NoteDetailCardHeader = ({ note, handleCopy, handleShare, readingTime, copi
                     ) : (
                         <h1
                             className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight cursor-pointer"
-                            onClick={() => setIsEditing(true)}
+                            onClick={() => setIsEditingTitle(true)}
                             title="Click to edit"
                         >
                             {title}

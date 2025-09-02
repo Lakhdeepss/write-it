@@ -27,7 +27,7 @@ const NotesDetailPage = () => {
     const handleSave = async () => {
         if (!note) return;
         try {
-            const updated = await editNote(note._id, title, content); // ✅ update both
+            const updated = await editNote(note._id, title, content);
             setNote(updated);
             setTitle(updated.title);
             setContent(updated.content);
@@ -53,7 +53,7 @@ const NotesDetailPage = () => {
             try {
                 await navigator.share(shareData);
             } catch {
-                // user cancelled or not supported
+                // cancelled or not supported
             }
         } else {
             await handleCopy();
@@ -71,12 +71,16 @@ const NotesDetailPage = () => {
             {note ? (
                 <article className="max-w-3xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
                     <NoteDetailCardHeader
-                        note={{ ...note, title }}
+                        title={title}
+                        setTitle={setTitle}
+                        note={note}
+                        handleSave={handleSave}
                         handleCopy={handleCopy}
                         handleShare={handleShare}
                         readingTime={readingTime}
                         copied={copied}
                     />
+
                     <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
 
                     <section className="p-6 sm:p-8">
@@ -98,7 +102,7 @@ const NotesDetailPage = () => {
                                     </button>
                                     <button
                                         onClick={() => {
-                                            setContent(note.content); // reset
+                                            setContent(note.content);
                                             setIsEditing(false);
                                         }}
                                         className="px-4 py-2 rounded-md bg-gray-300 hover:bg-gray-400"
