@@ -6,8 +6,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { getnotes } from '@/actions/getNotes'
 
+
 import { Homedata } from '@/components/homedata'
-const Page = async () => {
+const HomePage = async () => {
 
 
   const data = await getnotes();
@@ -42,4 +43,4 @@ const Page = async () => {
   )
 }
 
-export default Page
+export default HomePage

@@ -31,6 +31,7 @@ const NotesDetailPage = () => {
             setNote(updated);
             setTitle(updated.title);
             setContent(updated.content);
+            console.log("Note updated successfully:", updated);
             setIsEditing(false);
         } catch (err) {
             console.error("Error updating note:", err);

@@ -57,24 +57,7 @@ const NoteDetailCardHeader = ({
                         </h1>
                     )}
 
-                    <div className="mt-1 text-sm text-gray-500 flex flex-wrap gap-3 items-center">
-                        {readingTime && <span>{readingTime} min read</span>}
-                        {note.updatedAt && (
-                            <span>• Updated {new Date(note.updatedAt).toLocaleDateString()}</span>
-                        )}
-                        {note.tags?.length ? (
-                            <span className="flex gap-2">
-                                {note.tags.map((t, i) => (
-                                    <span
-                                        key={i}
-                                        className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full"
-                                    >
-                                        {t}
-                                    </span>
-                                ))}
-                            </span>
-                        ) : null}
-                    </div>
+
                 </div>
             </div>
 
