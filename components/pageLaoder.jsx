@@ -1,6 +1,6 @@
 import React from 'react'
 
-const PageLaoder = () => {
+const PageLoader = () => {
     return (
         <div className="flex flex-col justify-center items-center h-64">
             <svg className="animate-spin h-12 w-12 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -12,4 +12,4 @@ const PageLaoder = () => {
     )
 }
 
-export default PageLaoder
+export default PageLoader

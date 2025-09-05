@@ -5,6 +5,8 @@ import { Plus } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getnotes } from '@/actions/getNotes'
+import { Suspense } from 'react'
+import PageLoader from '@/components/pageLaoder'
 
 
 import { Homedata } from '@/components/homedata'
@@ -32,12 +34,15 @@ const HomePage = async () => {
         {/* Title + Image Row */}
 
         {/* Button with Icon */}
-        <Link href="/addnote/">
-          <Button variant="outline" className="mt-6 bg-blue-400 flex items-center gap-2 hover:text-black">
-            <Plus className="w-4 h-4" />
-            Create Note
-          </Button>
-        </Link>
+        <Suspense fallback={<PageLoader />}>
+          <Link href="/addnote/">
+            <Button variant="outline" className="mt-6 bg-blue-400 flex items-center gap-2 hover:text-black">
+              <Plus className="w-4 h-4" />
+              Create Note
+            </Button>
+          </Link>
+        </Suspense>
+
       </div>
     </div>
   )
