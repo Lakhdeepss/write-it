@@ -16,31 +16,46 @@ export const authOptions = {
                 try {
                     await connectDB();
                     const user = await User.findOne({ email });
-                    if (!user) {
-                        return null;
-                    }
+                    if (!user) return null;
+
                     const passwordMatch = await bcrypt.compare(password, user.password);
-                    if (!passwordMatch) {
-                        return null;
-                    }
-                    return user;
+                    if (!passwordMatch) return null;
+
+                    return {
+                        id: user._id.toString(),
+                        name: user.name,
+                        email: user.email,
+                    };
+                } catch (error) {
+                    console.log("Error", error);
+                    return null;
                 }
-                catch (error) {
-                    console.log("Error", error)
-                }
-                return null;
             },
         }),
     ],
     session: {
-        strategy: "jwt"
+        strategy: "jwt",
     },
     secret: process.env.NEXTAUTH_SECRET,
     pages: {
         signIn: "/",
         signOut: "/signup",
     },
+
+    callbacks: {
+        async jwt({ token, user }) {
+            if (user) {
+                token.id = user.id; //  store id in token
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (token?.id) {
+                session.user.id = token.id; //  expose id in session
+            }
+            return session;
+        },
+    },
 };
 const handler = NextAuth(authOptions);
-
 export { handler as GET, handler as POST };

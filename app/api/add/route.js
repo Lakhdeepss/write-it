@@ -6,9 +6,13 @@ import { NextResponse } from "next/server";
 export async function POST(request) {
     try {
         await connectDB();
-        const { title, content } = await request.json();
+        const { title, content, userId } = await request.json();
 
-        const note = new Note({ title, content });
+        if (!userId) {
+            return NextResponse.json({ error: "User ID is required" }, { status: 400 });
+        }
+
+        const note = new Note({ title, content, userId });
         await note.save();
         console.log("Note saved:", note);
 
@@ -17,6 +21,4 @@ export async function POST(request) {
         console.error("Error saving note:", error);
         return NextResponse.json({ error: "Failed to save note" }, { status: 500 });
     }
-
 }
-

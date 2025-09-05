@@ -12,35 +12,35 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Plus } from "lucide-react"
 import { useRouter } from "next/navigation";
+import NextAuth from "next-auth";
+import { useSession } from "next-auth/react";
 
 
 export function CardComponent() {
     const router = useRouter();
+    const { data: session } = useSession();
 
     const handlePost = async (e) => {
-        try {
-            e.preventDefault(); // prevent page reload
-            const formData = new FormData(e.currentTarget);
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
 
-            const data = {
-                title: formData.get("title"),
-                content: formData.get("content"),
-            };
+        const data = {
+            title: formData.get("title"),
+            content: formData.get("content"),
+            userId: session?.user?.id, // 👈 from NextAuth session
+        };
 
-            let response = await fetch("/api/add/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            });
-            let responseData = await response.json();
-            console.log(responseData.message);
-            router.push("/");
-        } catch (error) {
-            console.error("Error adding note:", error);
-        }
+        let response = await fetch("/api/add/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
+
+        let responseData = await response.json();
+        console.log(responseData.message);
+        router.push("/");
     };
+
 
 
     return (
